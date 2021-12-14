@@ -5,7 +5,6 @@ import com.sombra.promotion.dto.anonymous.LoginUserDTO;
 import com.sombra.promotion.service.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

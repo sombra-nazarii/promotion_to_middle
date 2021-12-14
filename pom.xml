@@ -87,6 +87,39 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <append>true</append>
+                    <excludes>
+                        <exclude>com/sombra/promotion/configuration/**</exclude>
+                        <exclude>com/sombra/promotion/controller/**</exclude>
+                        <exclude>com/sombra/promotion/dto/**</exclude>
+                        <exclude>com/sombra/promotion/entity/**</exclude>
+                        <exclude>com/sombra/promotion/enums/**</exclude>
+                        <exclude>com/sombra/promotion/exception/**</exclude>
+                        <exclude>com/sombra/promotion/filter/**</exclude>
+                        <exclude>com/sombra/promotion/repository/**</exclude>
+                        <exclude>com/sombra/promotion/security/**</exclude>
+                    </excludes>
+                    <output>file</output>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
