@@ -19,6 +19,8 @@ public final class Constants {
     public static final String PASSWORD = "Password";
     public static final String BEARER = "Bearer";
     public static final String TOKEN = "Token";
+    public static final String NULL = "null";
+    public static final String ACCESS = "Access";
     public static final String BEARER_SPACE = "Bearer ";
     public static final String ROLES = "roles";
     public static final String USER_CREDENTIAL = "User Credential";
@@ -51,6 +53,7 @@ public final class Constants {
 
     public static final String SPACE = " ";
     public static final String DOUBLE_QUOTES = "";
+    public static final String COLON = ":";
 
 //                                   U R L
 

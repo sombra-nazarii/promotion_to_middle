@@ -6,7 +6,6 @@ import com.sombra.promotion.dto.anonymous.LoginUserDTO;
 import com.sombra.promotion.entity.JwtToken;
 import com.sombra.promotion.entity.UserCredential;
 import com.sombra.promotion.exception.BadRequestException;
-import com.sombra.promotion.exception.NotFoundException;
 import com.sombra.promotion.exception.UnauthorizedException;
 import com.sombra.promotion.mapper.JwtTokenMapper;
 import com.sombra.promotion.repository.JwtTokenRepository;
@@ -26,7 +25,6 @@ import java.util.Objects;
 
 import static com.sombra.promotion.util.Constants.*;
 import static com.sombra.promotion.util.JwtTokenBuilder.getDecodedJWT;
-import static com.sombra.promotion.util.JwtTokenBuilder.isValidJjwSignature;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.Objects.isNull;
@@ -41,9 +39,9 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     private final UserCredentialService userCredentialService;
     private final JwtTokenMapper jwtTokenMapper;
 
-    private static final String TOKEN_IS_NOT_VALID = "Token is not valid";
-    private static final String TOKEN_HAD_EXPIRED = "Token had expired";
-    private static final String TOKEN_NOT_EXISTS = "Token not exists";
+    public static final String TOKEN_IS_NOT_VALID = "Token is not valid";
+    public static final String TOKEN_HAD_EXPIRED = "Token had expired";
+    public static final String TOKEN_NOT_EXISTS = "Token not exists";
 
     @Override
     @Transactional
@@ -74,7 +72,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 
                 return jwtTokenMapper.toDTO(jwtToken);
             } catch (Exception exception) {
-                throw new BadRequestException(COULD_NOT + GENERATE + SPACE + REFRESH_TOKEN + SPACE + exception.getMessage());
+                throw new BadRequestException(COULD_NOT + GENERATE + SPACE + REFRESH_TOKEN + COLON + SPACE + exception.getMessage());
             }
         } else {
             throw new BadRequestException(REFRESH_TOKEN + IS_MISSING);
@@ -89,7 +87,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 
     private void invalidateToken(final JwtToken token) {
         if (Objects.isNull(token)) {
-            throw new BadRequestException("No token");
+            throw new BadRequestException(TOKEN + IS_MISSING);
         }
         token.setValid(FALSE).setDeleted(TRUE);
 
@@ -98,7 +96,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 
     @Override
     public void validateToken(final JwtToken token) {
-        if (!JwtTokenBuilder.isValidJjwSignature(token)) {
+        if (!jwtTokenBuilder.isValidJjwSignature(token)) {
             throw new UnauthorizedException(TOKEN_IS_NOT_VALID);
         }
         if (isNull(token)) {
@@ -113,21 +111,23 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         if (token.getAccessTokenExpirationDateTime().isBefore(LocalDateTime.now(ZoneOffset.UTC))) {
             throw new UnauthorizedException(TOKEN_HAD_EXPIRED);
         }
+        if (token.getRefreshTokenExpirationDateTime().isBefore(LocalDateTime.now(ZoneOffset.UTC))) {
+            throw new UnauthorizedException(TOKEN_HAD_EXPIRED);
+        }
     }
 
     @Override
     public JwtToken getByAccessToken(final String accessToken) {
+        if (isNull(accessToken)) {
+            throw new BadRequestException(ACCESS + SPACE + TOKEN + IS_MISSING);
+        }
         return jwtTokenRepository.getByAccessToken(accessToken);
     }
 
+    @Override
     public JwtToken getCurrentJWT() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (JwtToken) authentication.getCredentials();
-    }
-
-    public JwtToken getExistingByUserEmail(final String email) {
-        return jwtTokenRepository.getByUserCredentialEmail(email)
-                .orElseThrow(() -> new NotFoundException(COULD_NOT + FIND + TOKEN + FOR + USER + WITH_EMAIL));
     }
 
     private JwtToken createJWT(final UserCredential userCredential) {
@@ -147,7 +147,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     private JwtToken renewJWT(final UserCredential userCredential) {
         final JwtToken jwtToken;
         final JwtToken existingJwt = userCredential.getJwtToken();
-        if (isValidJjwSignature(existingJwt)) {
+        if (jwtTokenBuilder.isValidJjwSignature(existingJwt)) {
             jwtToken = existingJwt;
             existingJwt.setValid(TRUE).setDeleted(FALSE);
         } else {

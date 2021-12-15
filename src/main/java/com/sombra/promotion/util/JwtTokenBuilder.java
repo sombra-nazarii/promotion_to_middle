@@ -62,7 +62,7 @@ public final class JwtTokenBuilder {
         return accessTokenExpirationSeconds;
     }
 
-    public static boolean isValidJjwSignature(final JwtToken token) {
+    public boolean isValidJjwSignature(final JwtToken token) {
         final Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         final JWTVerifier verifier = JWT.require(algorithm).build();
         try {

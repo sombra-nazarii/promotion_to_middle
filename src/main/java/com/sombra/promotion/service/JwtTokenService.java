@@ -16,4 +16,6 @@ public interface JwtTokenService {
 
     void logout();
 
+    JwtToken getCurrentJWT();
+
 }

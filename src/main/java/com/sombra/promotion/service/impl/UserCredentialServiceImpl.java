@@ -1,6 +1,5 @@
 package com.sombra.promotion.service.impl;
 
-import com.sombra.promotion.entity.JwtToken;
 import com.sombra.promotion.entity.UserCredential;
 import com.sombra.promotion.exception.NotFoundException;
 import com.sombra.promotion.exception.UnauthorizedException;
@@ -41,12 +40,6 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
     public UserCredential getExistingByEmail(final String email) {
         return userCredentialRepository.getByEmail(email)
                 .orElseThrow(() -> new NotFoundException(format(USER_CREDENTIAL + WITH_EMAIL + NOT_EXIST, email)));
-    }
-
-    @Override
-    public UserCredential getExistingByToken(JwtToken jwtToken) {
-        return userCredentialRepository.getByJwtToken(jwtToken)
-                .orElseThrow(() -> new NotFoundException(COULD_NOT + FIND + USER_CREDENTIAL + BY_TOKEN));
     }
 
     @Override
