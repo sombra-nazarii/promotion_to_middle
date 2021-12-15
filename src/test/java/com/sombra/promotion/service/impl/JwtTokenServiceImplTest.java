@@ -115,7 +115,7 @@ class JwtTokenServiceImplTest {
         doThrow(new UnauthorizedException(NOT_AUTHORIZED)).when(userCredentialServiceMock).validateUserCredential(null);
 
         // VERIFY
-        UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
+        final UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
                 () -> sut.login(loginUserDTO));
         assertEquals(NOT_AUTHORIZED, resultException.getMessage());
         verify(jwtTokenMapperMock, never()).toDTO(any());
@@ -143,7 +143,7 @@ class JwtTokenServiceImplTest {
         doReturn(null).when(sut).getCurrentJWT();
 
         // VERIFY
-        BadRequestException resultException = assertThrows(BadRequestException.class,
+        final BadRequestException resultException = assertThrows(BadRequestException.class,
                 () -> sut.logout());
         assertEquals(TOKEN + IS_MISSING, resultException.getMessage());
         verify(jwtTokenRepositoryMock, never()).save(any());
@@ -168,7 +168,7 @@ class JwtTokenServiceImplTest {
     public void getByAccessToken_accessTokenIsMissing_correctBehaviour() {
 
         // VERIFY
-        BadRequestException resultException = assertThrows(BadRequestException.class,
+        final BadRequestException resultException = assertThrows(BadRequestException.class,
                 () -> sut.getByAccessToken(null));
         assertEquals(ACCESS + SPACE + TOKEN + IS_MISSING, resultException.getMessage());
         verify(jwtTokenRepositoryMock, never()).getByAccessToken(any());
@@ -197,7 +197,7 @@ class JwtTokenServiceImplTest {
     public void validateToken_invalidTokenSignature_throwsUnauthorizedException() {
 
         // VERIFY
-        UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
+        final UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
                 () -> sut.validateToken(null));
         assertEquals(TOKEN_IS_NOT_VALID, resultException.getMessage());
 
@@ -210,7 +210,7 @@ class JwtTokenServiceImplTest {
         when(jwtTokenBuilderMock.isValidJjwSignature(any())).thenReturn(TRUE);
 
         // VERIFY
-        UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
+        final UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
                 () -> sut.validateToken(null));
         assertEquals(TOKEN_NOT_EXISTS, resultException.getMessage());
 
@@ -224,7 +224,7 @@ class JwtTokenServiceImplTest {
         jwtToken.setValid(FALSE);
 
         // VERIFY
-        UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
+        final UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
                 () -> sut.validateToken(jwtToken));
         assertEquals(TOKEN_IS_NOT_VALID, resultException.getMessage());
 
@@ -238,7 +238,7 @@ class JwtTokenServiceImplTest {
         jwtToken.setDeleted(TRUE);
 
         // VERIFY
-        UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
+        final UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
                 () -> sut.validateToken(jwtToken));
         assertEquals(TOKEN_IS_NOT_VALID, resultException.getMessage());
 
@@ -252,7 +252,7 @@ class JwtTokenServiceImplTest {
         jwtToken.setAccessTokenExpirationDateTime(LocalDateTime.MIN);
 
         // VERIFY
-        UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
+        final UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
                 () -> sut.validateToken(jwtToken));
         assertEquals(TOKEN_HAD_EXPIRED, resultException.getMessage());
 
@@ -266,7 +266,7 @@ class JwtTokenServiceImplTest {
         jwtToken.setRefreshTokenExpirationDateTime(LocalDateTime.MIN).setAccessTokenExpirationDateTime(LocalDateTime.MAX);
 
         // VERIFY
-        UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
+        final UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
                 () -> sut.validateToken(jwtToken));
         assertEquals(TOKEN_HAD_EXPIRED, resultException.getMessage());
 
@@ -279,7 +279,7 @@ class JwtTokenServiceImplTest {
         when(jwtTokenBuilderMock.isValidJjwSignature(any())).thenReturn(TRUE);
         jwtToken.setRefreshTokenExpirationDateTime(LocalDateTime.MAX).setAccessTokenExpirationDateTime(LocalDateTime.MAX);
 
-        // VERIFY
+        // ACT
         sut.validateToken(jwtToken);
 
     }
@@ -303,7 +303,7 @@ class JwtTokenServiceImplTest {
     public void refreshToken_missingBearerRefreshToken_throwsBadRequestException() {
 
         // VERIFY
-        BadRequestException resultException = assertThrows(BadRequestException.class,
+        final BadRequestException resultException = assertThrows(BadRequestException.class,
                 () -> sut.refreshToken(null));
         assertEquals(REFRESH_TOKEN + IS_MISSING, resultException.getMessage());
 
@@ -313,7 +313,7 @@ class JwtTokenServiceImplTest {
     public void refreshToken_invalidToken_throwsBadRequestException() {
 
         // VERIFY
-        BadRequestException resultException = assertThrows(BadRequestException.class,
+        final BadRequestException resultException = assertThrows(BadRequestException.class,
                 () -> sut.refreshToken("invalid Token"));
         assertEquals(REFRESH_TOKEN + IS_MISSING, resultException.getMessage());
 
@@ -326,7 +326,7 @@ class JwtTokenServiceImplTest {
         final String refreshToken = jwtTokenBuilder.getRefreshToken(userCredential, REFRESH_TOKEN_URL);
 
         // VERIFY
-        BadRequestException resultException = assertThrows(BadRequestException.class,
+        final BadRequestException resultException = assertThrows(BadRequestException.class,
                 () -> sut.refreshToken(BEARER_SPACE + refreshToken));
         assertEquals(COULD_NOT + GENERATE + SPACE + REFRESH_TOKEN + COLON + SPACE + NULL, resultException.getMessage());
 
