@@ -18,4 +18,6 @@ public interface JwtTokenService {
 
     JwtToken getCurrentJWT();
 
+    Boolean verifyAccessToken(String accessToken);
+
 }

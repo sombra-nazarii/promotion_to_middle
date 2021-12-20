@@ -80,6 +80,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     }
 
     @Override
+    @Transactional
     public void logout() {
         final JwtToken token = getCurrentJWT();
         invalidateToken(token);
@@ -130,6 +131,19 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         return (JwtToken) authentication.getCredentials();
     }
 
+    @Override
+    public Boolean verifyAccessToken(final String bearerAccessToken) {
+        final String accessToken = bearerAccessToken.substring(BEARER_SPACE.length());
+        final JwtToken jwtToken = getCurrentJWT();
+        final Boolean isValidJWT = isValidJWT(jwtToken);
+
+        if (isValidJWT){
+            return jwtToken.getAccessToken().equals(accessToken);
+        }else {
+            return false;
+        }
+    }
+
     private JwtToken createJWT(final UserCredential userCredential) {
         final String accessToken = jwtTokenBuilder.getAccessToken(userCredential, LOGIN_URL);
         final String refreshToken = jwtTokenBuilder.getRefreshToken(userCredential, LOGIN_URL);
@@ -171,5 +185,16 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     private void updateUserLastLogged(final UserCredential userCredential) {
         final LocalDateTime currentDate = LocalDateTime.now(ZoneOffset.UTC);
         userCredential.setLastLogged(currentDate);
+    }
+
+    private Boolean isValidJWT(final JwtToken jwtToken) {
+        Boolean isValid;
+        try {
+            validateToken(jwtToken);
+            isValid = TRUE;
+        } catch (Exception e){
+            isValid = FALSE;
+        }
+        return isValid;
     }
 }
