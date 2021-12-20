@@ -1,8 +1,10 @@
 package com.sombra.promotion.service.impl;
 
+import com.sombra.promotion.dto.user_credential.UserCredentialDTO;
 import com.sombra.promotion.entity.UserCredential;
 import com.sombra.promotion.exception.NotFoundException;
 import com.sombra.promotion.exception.UnauthorizedException;
+import com.sombra.promotion.mapper.UserCredentialMapper;
 import com.sombra.promotion.repository.UserCredentialRepository;
 import com.sombra.promotion.service.UserCredentialService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.sombra.promotion.util.Constants.*;
 import static java.lang.String.format;
@@ -22,6 +27,7 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
 
     private final UserCredentialRepository userCredentialRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
+    private final UserCredentialMapper userCredentialMapper;
 
     @Override
     public void validateUserCredential(final UserCredential userCredential) {
@@ -47,6 +53,13 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
         if (!bCryptPasswordEncoder.matches(password, storedPassword)) {
             throw new UnauthorizedException(PASSWORD + NOT_VALID);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserCredentialDTO> getAll() {
+        final List<UserCredential> userCredentials = userCredentialRepository.findAll();
+        return userCredentialMapper.toDtoList(userCredentials);
     }
 
     @Override
