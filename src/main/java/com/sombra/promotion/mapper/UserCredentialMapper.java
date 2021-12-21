@@ -13,16 +13,16 @@ import static java.util.Objects.isNull;
 @Component
 public class UserCredentialMapper {
 
-    public UserCredentialDTO toDto(final UserCredential userCredential) {
+    public UserCredentialDTO toDTO(final UserCredential userCredential) {
         return UserCredentialDTO.createInstance(userCredential);
     }
 
-    public List<UserCredentialDTO> toDtoList(final List<UserCredential> userCredentials) {
+    public List<UserCredentialDTO> toDTOList(final List<UserCredential> userCredentials) {
         if (isNull(userCredentials)) {
             return new ArrayList<>();
         }
         return userCredentials.stream()
-                .map(this::toDto)
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 }

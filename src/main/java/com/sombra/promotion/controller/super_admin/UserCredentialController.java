@@ -1,12 +1,11 @@
 package com.sombra.promotion.controller.super_admin;
 
+import com.sombra.promotion.dto.user_credential.UserCredentialCreateDTO;
 import com.sombra.promotion.dto.user_credential.UserCredentialDTO;
 import com.sombra.promotion.service.UserCredentialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,8 +16,13 @@ public class UserCredentialController {
 
     private final UserCredentialService userCredentialService;
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<UserCredentialDTO>> getAll(){
         return ResponseEntity.ok(userCredentialService.getAll());
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<UserCredentialDTO> createUserCredential(@RequestBody UserCredentialCreateDTO userCredential){
+        return ResponseEntity.ok(userCredentialService.createUserCredential(userCredential));
     }
 }

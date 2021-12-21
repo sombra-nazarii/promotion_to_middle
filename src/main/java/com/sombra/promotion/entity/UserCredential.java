@@ -34,7 +34,7 @@ public class UserCredential implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "user_credential_roles",
             joinColumns = {@JoinColumn(name = "user_credential_id", referencedColumnName = "id")},
@@ -59,6 +59,23 @@ public class UserCredential implements UserDetails {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().getAuthority()))
                 .collect(Collectors.toList());
+    }
+
+    public static UserCredential createInstance(final Long id,
+                                                final String email,
+                                                final String password,
+                                                final Collection<Role> roles,
+                                                final LocalDateTime lastLogged,
+                                                final boolean enabled,
+                                                final boolean deleted) {
+        return new UserCredential()
+                .setId(id)
+                .setEmail(email)
+                .setPassword(password)
+                .setRoles(roles)
+                .setLastLogged(lastLogged)
+                .setEnabled(enabled)
+                .setDeleted(deleted);
     }
 
     @Override

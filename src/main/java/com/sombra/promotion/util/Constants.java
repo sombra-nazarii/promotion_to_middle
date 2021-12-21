@@ -23,6 +23,7 @@ public final class Constants {
     public static final String ACCESS = "Access";
     public static final String BEARER_SPACE = "Bearer ";
     public static final String ROLES = "roles";
+    public static final String ROLE = "Role";
     public static final String USER_CREDENTIAL = "User Credential";
     public static final String USER = "User";
     public static final String REFRESH_TOKEN = "Refresh Token";
@@ -40,6 +41,7 @@ public final class Constants {
     public static final String NOT_EMPTY = " must be not empty";
     public static final String NOT_VALID = " must be valid";
     public static final String WITH_EMAIL = " with email: %s";
+    public static final String WITH_NAME = " with name: %s";
     public static final String NOT_EXIST = " does not exist";
     public static final String IS_MISSING = " is missing";
     public static final String COULD_NOT = "Could not";
