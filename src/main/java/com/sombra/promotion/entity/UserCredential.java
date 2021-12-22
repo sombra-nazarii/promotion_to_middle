@@ -98,4 +98,3 @@ public class UserCredential implements UserDetails {
         return true;
     }
 }
-
