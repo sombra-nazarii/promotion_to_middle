@@ -18,11 +18,8 @@ public class UserCredentialMapper {
     }
 
     public List<UserCredentialDTO> toDTOList(final List<UserCredential> userCredentials) {
-        if (isNull(userCredentials)) {
-            return new ArrayList<>();
-        }
-        return userCredentials.stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        return isNull(userCredentials)
+                ? new ArrayList<>()
+                : userCredentials.stream().map(this::toDTO).collect(Collectors.toList());
     }
 }
