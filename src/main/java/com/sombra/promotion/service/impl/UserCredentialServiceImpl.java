@@ -2,9 +2,11 @@ package com.sombra.promotion.service.impl;
 
 import com.sombra.promotion.dto.user_credential.UserCredentialCreateDTO;
 import com.sombra.promotion.dto.user_credential.UserCredentialDTO;
+import com.sombra.promotion.dto.user_credential.UserCredentialUpdateDTO;
 import com.sombra.promotion.entity.Role;
 import com.sombra.promotion.entity.UserCredential;
 import com.sombra.promotion.enums.RoleEnum;
+import com.sombra.promotion.exception.InternalServerException;
 import com.sombra.promotion.exception.NotFoundException;
 import com.sombra.promotion.exception.UnauthorizedException;
 import com.sombra.promotion.mapper.UserCredentialMapper;
@@ -12,6 +14,9 @@ import com.sombra.promotion.repository.UserCredentialRepository;
 import com.sombra.promotion.service.RoleService;
 import com.sombra.promotion.service.UserCredentialService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,9 +29,12 @@ import java.util.stream.Collectors;
 
 import static com.sombra.promotion.util.Constants.*;
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserCredentialServiceImpl implements UserCredentialService, UserDetailsService {
@@ -56,6 +64,12 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
     }
 
     @Override
+    public UserCredential getExistingById(final Long id) {
+        return userCredentialRepository.findByIdNSD(id)
+                .orElseThrow(() -> new NotFoundException(format(USER_CREDENTIAL + WITH_ID + NOT_EXIST, id)));
+    }
+
+    @Override
     public void validatePassword(final String password, final String storedPassword) {
         if (!bCryptPasswordEncoder.matches(password, storedPassword)) {
             throw new UnauthorizedException(PASSWORD + NOT_VALID);
@@ -71,6 +85,7 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
 
     @Override
     @Transactional
+    @PreAuthorize(value = "hasRole('ROLE_SUPER_ADMIN')")
     public UserCredentialDTO createUserCredential(final UserCredentialCreateDTO userCredentialToCreate) {
         final List<Role> roles = userCredentialToCreate.getRoles().stream()
                 .map(RoleEnum::valueOf)
@@ -86,11 +101,71 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
                 FALSE);
 
         final UserCredential savedUserCredential = userCredentialRepository.save(userCredential);
+        log.info("Created new User Credential with email {}", userCredential.getEmail());
         return userCredentialMapper.toDTO(savedUserCredential);
+    }
+
+    @Override
+    @Transactional
+    public UserCredentialDTO updateUserCredential(final UserCredentialUpdateDTO userCredentialToUpdate) {
+        final UserCredential userCredential = getExistingById(userCredentialToUpdate.getId());
+
+        final List<Role> roles = userCredentialToUpdate.getRoles().stream()
+                .map(RoleEnum::valueOf)
+                .map(roleService::getExistingByRoleName)
+                .collect(Collectors.toList());
+
+        userCredential
+                .setEmail(userCredentialToUpdate.getEmail())
+                .setRoles(roles);
+
+        final UserCredential savedUserCredential = userCredentialRepository.save(userCredential);
+        log.info("Updated User Credential with email {}", userCredential.getEmail());
+        return userCredentialMapper.toDTO(savedUserCredential);
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize(value = "hasRole('ROLE_SUPER_ADMIN')")
+    public void deleteUserCredential(final String email) {
+        final UserCredential userCredential = getExistingByEmail(email);
+
+        userCredential
+                .setDeleted(TRUE)
+                .setEnabled(FALSE);
+
+        userCredentialRepository.save(userCredential);
+        log.info("Deleted User Credential with email {}", userCredential.getEmail());
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize(value = "hasRole('ROLE_SUPER_ADMIN')")
+    public void changeEnableStatusUserCredential(final Long id, final Boolean enableStatus) {
+        final UserCredential userCredential = getExistingById(id);
+
+        if (!userCredential.isDeleted() && nonNull(userCredential.getLastLogged())) {
+            userCredential.setEnabled(enableStatus);
+
+            userCredentialRepository.save(userCredential);
+            log.info("Changed User Credential enabled status to {}", enableStatus);
+        }
     }
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         return getExistingByEmail(email);
+    }
+
+    public UserCredential getCurrentUserCredential() {
+        final Object userCredential = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (nonNull(userCredential) && userCredential instanceof UserCredential) {
+            return (UserCredential) userCredential;
+        } else {
+            throw new InternalServerException("Can't get User Credential");
+        }
     }
 }

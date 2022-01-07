@@ -16,6 +16,11 @@ public interface UserCredentialRepository extends JpaRepository<UserCredential, 
     Optional<UserCredential> getByEmail(@Param("email") String email);
 
     @Query(value = "SELECT u FROM UserCredential u " +
+            "WHERE u.id = :id " +
+            "AND u.deleted = FALSE ")
+    Optional<UserCredential> findByIdNSD(@Param("id") Long id);
+
+    @Query(value = "SELECT u FROM UserCredential u " +
             "WHERE u.jwtToken = :jwtToken " +
             "AND u.deleted = FALSE ")
     Optional<UserCredential> getByJwtToken(@Param("jwtToken") JwtToken jwtToken);

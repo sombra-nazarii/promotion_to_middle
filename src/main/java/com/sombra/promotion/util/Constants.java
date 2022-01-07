@@ -15,6 +15,7 @@ public final class Constants {
 
 //                                   S T A T I C    W O R D S
 
+    public static final String ID = "Id";
     public static final String EMAIL = "Email";
     public static final String PASSWORD = "Password";
     public static final String BEARER = "Bearer";
@@ -41,6 +42,7 @@ public final class Constants {
     public static final String NOT_EMPTY = " must be not empty";
     public static final String NOT_VALID = " must be valid";
     public static final String WITH_EMAIL = " with email: %s";
+    public static final String WITH_ID = " with id: %d";
     public static final String WITH_NAME = " with name: %s";
     public static final String NOT_EXIST = " does not exist";
     public static final String IS_MISSING = " is missing";
