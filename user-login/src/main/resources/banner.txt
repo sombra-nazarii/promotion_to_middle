@@ -1,0 +1,9 @@
+${AnsiColor.BRIGHT_BLUE} _____  _____                                          _____                         _
+${AnsiColor.BRIGHT_BLUE}|_   _||_   _|                                        |_   _|                       (_)
+${AnsiColor.BRIGHT_BLUE}  | |    | |    .--.    .---.   _ .--.     ______       | |        .--.     .--./)  __    _ .--.
+${AnsiColor.BRIGHT_BLUE}  | '    ' |   ( (`\]  / /__\\ [ `/'`\]   |______|      | |   _  / .'`\ \  / /'`\; [  |  [ `.-. |
+${AnsiColor.BRIGHT_BLUE}   \ \__/ /     `'.'.  | \__.,  | |                    _| |__/ | | \__. |  \ \._//  | |   | | | |
+${AnsiColor.BRIGHT_BLUE}    `.__.'     [\__) )  '.__.' [___]                  |________|  '.__.'   .',__`  [___] [___||__]
+
+${AnsiColor.GREEN}:: SOMBRA Nazarii Tkachuk promotion to Middle 🤓 backend server  :: Running Spring Boot ${spring-boot.version} ::
+${AnsiColor.DEFAULT}
