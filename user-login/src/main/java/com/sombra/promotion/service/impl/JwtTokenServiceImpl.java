@@ -133,7 +133,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 
     @Override
     public Boolean verifyAccessToken(final String bearerAccessToken) {
-        if (isNull(bearerAccessToken) || bearerAccessToken.startsWith(BEARER_SPACE)){
+        if (isNull(bearerAccessToken) || !bearerAccessToken.startsWith(BEARER_SPACE)){
             return FALSE;
         }
         final String accessToken = bearerAccessToken.substring(BEARER_SPACE.length());
