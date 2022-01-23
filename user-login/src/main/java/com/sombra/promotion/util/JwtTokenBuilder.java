@@ -12,8 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static com.sombra.promotion.util.Constants.BEARER_SPACE;
-import static com.sombra.promotion.util.Constants.ROLES;
+import static com.sombra.promotion.util.Constants.*;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
@@ -34,6 +33,7 @@ public final class JwtTokenBuilder {
                 .withClaim(ROLES, userCredential.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()))
+                .withClaim(USER_ID, userCredential.getId())
                 .sign(algorithm);
     }
 
@@ -59,10 +59,10 @@ public final class JwtTokenBuilder {
     }
 
     public Long getRefreshTokenExpirationSeconds() {
-        return accessTokenExpirationSeconds;
+        return refreshTokenExpirationSeconds;
     }
 
-    public boolean isValidJjwSignature(final JwtToken token) {
+    public boolean isValidJWT(final JwtToken token) {
         final Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         final JWTVerifier verifier = JWT.require(algorithm).build();
         try {

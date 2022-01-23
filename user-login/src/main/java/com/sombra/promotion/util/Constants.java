@@ -27,6 +27,7 @@ public final class Constants {
     public static final String ROLE = "Role";
     public static final String USER_CREDENTIAL = "User Credential";
     public static final String USER = "User";
+    public static final String USER_ID = "userId";
     public static final String REFRESH_TOKEN = "Refresh Token";
     public static final String GENERATE = " generate";
     public static final String FOR = " for";

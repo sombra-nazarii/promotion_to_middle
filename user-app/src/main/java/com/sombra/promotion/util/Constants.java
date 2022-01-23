@@ -34,6 +34,7 @@ public final class Constants {
     public static final String WAS = " was";
     public static final String DISABLED = " disabled";
     public static final String MESSAGE = "Message";
+    public static final String USER_ID = "userId";
 
 //                                   E R R O R    M E S S A G E S
 
@@ -48,6 +49,7 @@ public final class Constants {
     public static final String IS_MISSING = " is missing";
     public static final String COULD_NOT = "Could not";
     public static final String BY_TOKEN = " by Token";
+    public static final String TOKEN_IS_NOT_VALID = "Token is not valid";
 
 //                                   R E G U L A R    E X P R E S S I O N S
 

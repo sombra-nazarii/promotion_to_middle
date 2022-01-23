@@ -97,7 +97,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 
     @Override
     public void validateToken(final JwtToken token) {
-        if (!jwtTokenBuilder.isValidJjwSignature(token)) {
+        if (!jwtTokenBuilder.isValidJWT(token)) {
             throw new UnauthorizedException(TOKEN_IS_NOT_VALID);
         }
         if (isNull(token)) {
@@ -164,7 +164,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     private JwtToken renewJWT(final UserCredential userCredential) {
         final JwtToken jwtToken;
         final JwtToken existingJwt = userCredential.getJwtToken();
-        if (jwtTokenBuilder.isValidJjwSignature(existingJwt)) {
+        if (jwtTokenBuilder.isValidJWT(existingJwt)) {
             jwtToken = existingJwt;
             existingJwt.setValid(TRUE).setDeleted(FALSE);
         } else {

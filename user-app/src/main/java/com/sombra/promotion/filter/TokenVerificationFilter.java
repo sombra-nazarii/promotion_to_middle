@@ -1,7 +1,9 @@
 package com.sombra.promotion.filter;
 
 import com.sombra.promotion.exception.BadRequestException;
+import com.sombra.promotion.exception.UnauthorizedException;
 import com.sombra.promotion.util.Constants;
+import com.sombra.promotion.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.sombra.promotion.util.Constants.BEARER_SPACE;
+import static com.sombra.promotion.util.Constants.TOKEN_IS_NOT_VALID;
 import static com.sombra.promotion.util.HttpUtil.getHttpHeaders;
 import static com.sombra.promotion.util.HttpUtil.setAuthorization;
 import static java.lang.Boolean.TRUE;
@@ -24,13 +27,13 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j
 @Component
-public class TokenVerifyFilter extends OncePerRequestFilter {
+public class TokenVerificationFilter extends OncePerRequestFilter {
 
     @Value("${url.user-login}")
     private String userLoginServiceUrl;
     private final RestTemplate restTemplate;
 
-    public TokenVerifyFilter(@Qualifier("userLoginRestTemplate") RestTemplate restTemplate) {
+    public TokenVerificationFilter(@Qualifier("userLoginRestTemplate") RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
@@ -40,6 +43,10 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
                                     final FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_SPACE)) {
+            if (!JwtTokenUtil.isValidJWT(authorizationHeader)) {
+                throw new UnauthorizedException(TOKEN_IS_NOT_VALID);
+            }
+
             final HttpHeaders httpHeaders = getHttpHeaders();
             setAuthorization(httpHeaders, authorizationHeader);
 
@@ -58,7 +65,7 @@ public class TokenVerifyFilter extends OncePerRequestFilter {
                 throw new BadRequestException("Token is invalid!");
             }
         } else {
-            throw new RuntimeException("Hey");
+            throw new BadRequestException("Token is invalid!");
         }
     }
 }

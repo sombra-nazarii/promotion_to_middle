@@ -96,7 +96,7 @@ class JwtTokenServiceImplTest {
 
         // SETUP
         userCredential.setJwtToken(jwtToken);
-        when(jwtTokenBuilderMock.isValidJjwSignature(any(JwtToken.class))).thenReturn(TRUE);
+        when(jwtTokenBuilderMock.isValidJWT(any(JwtToken.class))).thenReturn(TRUE);
         when(userCredentialServiceMock.getExistingByEmail(anyString())).thenReturn(userCredential);
 
         // ACT
@@ -207,7 +207,7 @@ class JwtTokenServiceImplTest {
     public void validateToken_missingToken_throwsUnauthorizedException() {
 
         // SETUP
-        when(jwtTokenBuilderMock.isValidJjwSignature(any())).thenReturn(TRUE);
+        when(jwtTokenBuilderMock.isValidJWT(any())).thenReturn(TRUE);
 
         // VERIFY
         final UnauthorizedException resultException = assertThrows(UnauthorizedException.class,
@@ -220,7 +220,7 @@ class JwtTokenServiceImplTest {
     public void validateToken_invalidToken_throwsUnauthorizedException() {
 
         // SETUP
-        when(jwtTokenBuilderMock.isValidJjwSignature(any())).thenReturn(TRUE);
+        when(jwtTokenBuilderMock.isValidJWT(any())).thenReturn(TRUE);
         jwtToken.setValid(FALSE);
 
         // VERIFY
@@ -234,7 +234,7 @@ class JwtTokenServiceImplTest {
     public void validateToken_deletedToken_throwsUnauthorizedException() {
 
         // SETUP
-        when(jwtTokenBuilderMock.isValidJjwSignature(any())).thenReturn(TRUE);
+        when(jwtTokenBuilderMock.isValidJWT(any())).thenReturn(TRUE);
         jwtToken.setDeleted(TRUE);
 
         // VERIFY
@@ -248,7 +248,7 @@ class JwtTokenServiceImplTest {
     public void validateToken_invalidAccessTokenExpirationDate_throwsUnauthorizedException() {
 
         // SETUP
-        when(jwtTokenBuilderMock.isValidJjwSignature(any())).thenReturn(TRUE);
+        when(jwtTokenBuilderMock.isValidJWT(any())).thenReturn(TRUE);
         jwtToken.setAccessTokenExpirationDateTime(LocalDateTime.MIN);
 
         // VERIFY
@@ -262,7 +262,7 @@ class JwtTokenServiceImplTest {
     public void validateToken_invalidRefreshTokenExpirationDate_throwsUnauthorizedException() {
 
         // SETUP
-        when(jwtTokenBuilderMock.isValidJjwSignature(any())).thenReturn(TRUE);
+        when(jwtTokenBuilderMock.isValidJWT(any())).thenReturn(TRUE);
         jwtToken.setRefreshTokenExpirationDateTime(LocalDateTime.MIN).setAccessTokenExpirationDateTime(LocalDateTime.MAX);
 
         // VERIFY
@@ -276,7 +276,7 @@ class JwtTokenServiceImplTest {
     public void validateToken_clearCase_correctBehavior() {
 
         // SETUP
-        when(jwtTokenBuilderMock.isValidJjwSignature(any())).thenReturn(TRUE);
+        when(jwtTokenBuilderMock.isValidJWT(any())).thenReturn(TRUE);
         jwtToken.setRefreshTokenExpirationDateTime(LocalDateTime.MAX).setAccessTokenExpirationDateTime(LocalDateTime.MAX);
 
         // ACT
