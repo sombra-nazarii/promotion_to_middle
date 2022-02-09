@@ -16,4 +16,9 @@ public class CommonController {
     public ResponseEntity<Boolean> verifyToken(@RequestBody String accessToken){
         return ResponseEntity.ok(jwtTokenService.verifyAccessToken(accessToken));
     }
+
+    @GetMapping(value = "/health-check")
+    public ResponseEntity<String> healthCheck(){
+        return ResponseEntity.ok("Oh, hi!");
+    }
 }

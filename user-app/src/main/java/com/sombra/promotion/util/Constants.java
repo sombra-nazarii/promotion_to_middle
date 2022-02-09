@@ -65,7 +65,8 @@ public final class Constants {
 
   public interface URL{
       interface LOGIN_SERVICE{
-          public static final String VERIFY_TOKEN = "/api/public/verify/token";
+          String VERIFY_TOKEN = "/api/public/verify/token";
+          String HEALTH_CHECK = "/api/public/health-check";
       }
   }
 }

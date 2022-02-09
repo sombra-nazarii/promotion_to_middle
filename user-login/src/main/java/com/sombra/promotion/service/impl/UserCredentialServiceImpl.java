@@ -43,6 +43,7 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
     private final PasswordEncoder bCryptPasswordEncoder;
     private final UserCredentialMapper userCredentialMapper;
     private final RoleService roleService;
+    private final RestTemplateService restTemplateService;
 
     @Override
     public void validateUserCredential(final UserCredential userCredential) {
@@ -119,6 +120,13 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
                 .setEmail(userCredentialToUpdate.getEmail())
                 .setRoles(roles);
 
+        if (restTemplateService.isUserAppServiceHealthy()) {
+            restTemplateService.updateUserRoles(userCredential.getId(), userCredentialToUpdate.getRoles());
+        } else {
+            log.error("User App is Broken");
+            throw new InternalServerException("Can't update user");
+        }
+
         final UserCredential savedUserCredential = userCredentialRepository.save(userCredential);
         log.info("Updated User Credential with email {}", userCredential.getEmail());
         return userCredentialMapper.toDTO(savedUserCredential);
@@ -157,7 +165,7 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
         return getExistingByEmail(email);
     }
 
-    public UserCredential getCurrentUserCredential() {
+    public static UserCredential getCurrentUserCredential() {
         final Object userCredential = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();

@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.sombra.promotion.util.Constants.*;
+import static com.sombra.promotion.util.Constants.URL.LOGIN_URL;
+import static com.sombra.promotion.util.Constants.URL.REFRESH_TOKEN_URL;
 import static com.sombra.promotion.util.JwtTokenBuilder.getDecodedJWT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;

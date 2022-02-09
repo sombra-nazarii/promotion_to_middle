@@ -62,7 +62,17 @@ public final class Constants {
 
 //                                   U R L
 
-    public static final String LOGIN_URL = "/api/public/login";
-    public static final String REFRESH_TOKEN_URL = "/api/public/token/refresh";
+
+
+    public interface URL{
+
+        String LOGIN_URL = "/api/public/login";
+        String REFRESH_TOKEN_URL = "/api/public/token/refresh";
+
+        interface USER_APP_SERVICE{
+            String HEALTH_CHECK = "/api/public/health-check";
+            String UPDATE_USER_ROLES = "/api/user/";
+        }
+    }
 
 }

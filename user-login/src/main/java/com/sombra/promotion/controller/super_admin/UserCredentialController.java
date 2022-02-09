@@ -4,13 +4,13 @@ import com.sombra.promotion.dto.user_credential.UserCredentialCreateDTO;
 import com.sombra.promotion.dto.user_credential.UserCredentialDTO;
 import com.sombra.promotion.dto.user_credential.UserCredentialUpdateDTO;
 import com.sombra.promotion.service.UserCredentialService;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping("/api/super_admin")
 @RestController
 public class UserCredentialController {

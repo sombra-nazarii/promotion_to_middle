@@ -9,6 +9,7 @@ import com.sombra.promotion.exception.BadRequestException;
 import com.sombra.promotion.exception.UnauthorizedException;
 import com.sombra.promotion.mapper.JwtTokenMapper;
 import com.sombra.promotion.repository.JwtTokenRepository;
+import com.sombra.promotion.security.JwtAuthentication;
 import com.sombra.promotion.service.JwtTokenService;
 import com.sombra.promotion.service.UserCredentialService;
 import com.sombra.promotion.util.JwtTokenBuilder;
@@ -24,6 +25,8 @@ import java.time.ZoneOffset;
 import java.util.Objects;
 
 import static com.sombra.promotion.util.Constants.*;
+import static com.sombra.promotion.util.Constants.URL.LOGIN_URL;
+import static com.sombra.promotion.util.Constants.URL.REFRESH_TOKEN_URL;
 import static com.sombra.promotion.util.JwtTokenBuilder.getDecodedJWT;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -52,6 +55,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         updateUserLastLogged(userCredential);
 
         final JwtToken token = getJwtToken(userCredential);
+        SecurityContextHolder.getContext().setAuthentication(new JwtAuthentication(userCredential, token));
         return jwtTokenMapper.toDTO(token);
     }
 

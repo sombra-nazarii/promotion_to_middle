@@ -24,7 +24,7 @@ public final class JwtTokenUtil {
         final Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
         final JWTVerifier verifier = JWT.require(algorithm).build();
         try {
-            verifier.verify(token);
+            verifier.verify(token.substring(BEARER_SPACE.length()));
         } catch (Exception exception) {
             return FALSE;
         }

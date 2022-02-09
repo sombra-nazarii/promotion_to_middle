@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 
 import static com.sombra.promotion.service.impl.JwtTokenServiceImpl.*;
 import static com.sombra.promotion.util.Constants.*;
+import static com.sombra.promotion.util.Constants.URL.REFRESH_TOKEN_URL;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.*;

@@ -40,7 +40,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
             try {
                 final DecodedJWT decodedJWT = getDecodedJWT(authorizationHeader);
                 final Long userCredentialId = decodedJWT.getClaim(USER_ID).asLong();
-                final User user = userService.getExistingByUserCredentialId(userCredentialId);
+                final User user = userService.getExistingUserByUserCredentialId(userCredentialId);
 
                 SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(user));
                 filterChain.doFilter(request, response);
