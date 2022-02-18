@@ -72,6 +72,7 @@ public final class Constants {
         interface USER_APP_SERVICE{
             String HEALTH_CHECK = "/api/public/health-check";
             String UPDATE_USER_ROLES = "/api/user/";
+            String CREATE_USER = "/api/user/";
         }
     }
 

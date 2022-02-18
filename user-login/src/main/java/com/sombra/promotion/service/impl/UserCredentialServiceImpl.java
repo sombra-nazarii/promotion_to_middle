@@ -102,6 +102,14 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
                 FALSE);
 
         final UserCredential savedUserCredential = userCredentialRepository.save(userCredential);
+
+        if (restTemplateService.isUserAppServiceHealthy()) {
+            restTemplateService.createUser(savedUserCredential.getId(), userCredentialToCreate.getRoles());
+        } else {
+            log.error("User App is Broken");
+            throw new InternalServerException("Can't create user");
+        }
+
         log.info("Created new User Credential with email {}", userCredential.getEmail());
         return userCredentialMapper.toDTO(savedUserCredential);
     }
@@ -120,6 +128,8 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
                 .setEmail(userCredentialToUpdate.getEmail())
                 .setRoles(roles);
 
+        final UserCredential savedUserCredential = userCredentialRepository.save(userCredential);
+
         if (restTemplateService.isUserAppServiceHealthy()) {
             restTemplateService.updateUserRoles(userCredential.getId(), userCredentialToUpdate.getRoles());
         } else {
@@ -127,7 +137,6 @@ public class UserCredentialServiceImpl implements UserCredentialService, UserDet
             throw new InternalServerException("Can't update user");
         }
 
-        final UserCredential savedUserCredential = userCredentialRepository.save(userCredential);
         log.info("Updated User Credential with email {}", userCredential.getEmail());
         return userCredentialMapper.toDTO(savedUserCredential);
     }

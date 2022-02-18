@@ -16,10 +16,11 @@ import java.util.Iterator;
 
 import static com.sombra.promotion.service.impl.UserCredentialServiceImpl.getCurrentUserCredential;
 import static com.sombra.promotion.util.Constants.BEARER_SPACE;
+import static com.sombra.promotion.util.Constants.URL.USER_APP_SERVICE.CREATE_USER;
 import static com.sombra.promotion.util.Constants.URL.USER_APP_SERVICE.UPDATE_USER_ROLES;
-import static com.sombra.promotion.util.HttpUtil.getHttpHeaders;
-import static com.sombra.promotion.util.HttpUtil.setAuthorization;
+import static com.sombra.promotion.util.HttpUtil.*;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 
 @Slf4j
 @Service
@@ -56,14 +57,10 @@ public class RestTemplateService {
     }
 
     public void updateUserRoles(final Long userCredentialId, final Collection<String> roles) {
-        final UserCredential currentUserCredential = getCurrentUserCredential();
-        final JwtToken jwtToken = currentUserCredential.getJwtToken();
-        final String accessToken = jwtToken.getAccessToken();
-        final HttpHeaders httpHeaders = getHttpHeaders();
-        setAuthorization(httpHeaders, BEARER_SPACE + accessToken);
+        final HttpHeaders httpHeaders = getHttpAuthorizedHeaders();
 
         final RequestEntity<String> requestEntity = RequestEntity
-                .method(POST, userAppServiceUrl + UPDATE_USER_ROLES + userCredentialId)
+                .method(PUT, userAppServiceUrl + UPDATE_USER_ROLES + userCredentialId)
                 .accept(MediaType.APPLICATION_JSON)
                 .headers(httpHeaders)
                 .body(getStringRolesArray(roles));
@@ -84,5 +81,21 @@ public class RestTemplateService {
         }
         stringBuilder.append(" ]");
         return stringBuilder.toString();
+    }
+
+    public void createUser(final Long userCredentialId, final Collection<String> roles) {
+        final HttpHeaders httpHeaders = getHttpAuthorizedHeaders();
+
+        final RequestEntity<String> requestEntity = RequestEntity
+                .method(POST, userAppServiceUrl + CREATE_USER + userCredentialId)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(httpHeaders)
+                .body(getStringRolesArray(roles));
+
+        final ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new InternalServerException("Can't create user");
+        }
     }
 }

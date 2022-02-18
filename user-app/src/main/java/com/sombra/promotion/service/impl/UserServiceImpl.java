@@ -41,21 +41,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .orElseThrow(() -> new NotFoundException(format(USER + WITH_ID + NOT_EXIST, userCredentialId)));
     }
 
+    @Override
+    public boolean isUserExistByUserCredentialId(final Long userCredentialId) {
+        return userRepository.findUserByUserCredentialId(userCredentialId).isPresent();
+    }
+
     @Transactional
     @Override
     public void updateUserRole(final Long userCredentialId, final Collection<String> roles) {
         final User currentUser = getCurrentUser();
         final User user = getExistingUserByUserCredentialId(userCredentialId);
 
-        if (!currentUser.getId().equals(user.getId()) || !isUserSuperAdmin(currentUser)) {
+        if (!isUserSuperAdmin(currentUser)) {
             throw new BadRequestException("Can't update role");
         }
 
-        final List<Role> roleList = roles.stream()
-                .map(RoleEnum::valueOf)
-                .map(roleService::getExistingByRoleName)
-                .collect(Collectors.toList());
-
+        final List<Role> roleList = roleService.getRoles(roles);
         user.setRoles(roleList);
 
         if (restTemplateService.isLoginServiceHealthy()) {
@@ -64,6 +65,34 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             log.error("Login service is broken!");
             throw new InternalServerException("Cant' update role");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void createUser(final Long userCredentialId, final Collection<String> roles) {
+        final User currentUser = getCurrentUser();
+
+        if (!isUserSuperAdmin(currentUser)) {
+            throw new BadRequestException("Can't create user. You don't have enough permission");
+        }
+        userRepository.findUserByUserCredentialId(userCredentialId);
+        if (isUserExistByUserCredentialId(userCredentialId)) {
+            throw new BadRequestException(format("Can't create user. User with credential id '%d'  already exist!",
+                    userCredentialId));
+        }
+
+        final List<Role> roleList = roleService.getRoles(roles);
+        final User user = new User()
+                .setUserCredentialId(userCredentialId)
+                .setRoles(roleList);
+
+        if (restTemplateService.isLoginServiceHealthy()) {
+            userRepository.save(user);
+            log.info("Created User for User Credential with id {}", userCredentialId);
+        } else {
+            log.error("Login service is broken!");
+            throw new InternalServerException("Cant' create user");
         }
     }
 
