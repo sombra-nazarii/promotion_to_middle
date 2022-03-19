@@ -1,6 +1,7 @@
 package com.sombra.promotion.configuration;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -13,6 +14,7 @@ import java.time.Duration;
 public class MvcConfiguration implements WebMvcConfigurer {
 
     @Bean
+    @LoadBalanced
     public RestTemplate userAppRestTemplate(final RestTemplateBuilder builder) {
         return getDefaultRestTemplateBuilder(builder)
                 .build();
