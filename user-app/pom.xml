@@ -16,6 +16,7 @@
     <properties>
         <java.version>11</java.version>
         <eureka-server.version>3.1.1</eureka-server.version>
+        <java-jwt.version>3.19.1</java-jwt.version>
     </properties>
 
     <dependencies>
@@ -53,7 +54,7 @@
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.18.2</version>
+            <version>${java-jwt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -63,6 +64,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
             <version>${eureka-server.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
